@@ -1,46 +1,77 @@
 .conversation-page {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-2xl);
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-subtle);
+  gap: var(--spacing-lg, 1rem);
+  padding: var(--spacing-2xl, 2rem);
+  background: var(--color-surface, #fff);
+  border-radius: var(--radius-lg, 8px);
+  box-shadow: var(--shadow-subtle, 0 1px 3px rgba(0,0,0,0.1));
+}
+
+.conversation-page__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .conversation-page__title {
   margin: 0;
-  color: var(--color-text-primary);
+  color: var(--color-text-primary, #333);
   font-size: 2rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.2;
 }
 
+.conversation-page__slug {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary, #666);
+  font-family: monospace;
+  margin: 0;
+}
+
 .conversation-page__description {
-  color: var(--color-text-secondary);
+  color: var(--color-text-secondary, #666);
   line-height: 1.7;
   margin: 0;
 }
 
 .conversation-page__meta {
   display: flex;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-md);
-  background: var(--color-surface-muted);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
-  margin-top: var(--spacing-md);
+  flex-direction: column;
+  gap: var(--spacing-md, 1rem);
+  padding: var(--spacing-md, 1rem);
+  background: var(--color-surface-muted, #f9f9f9);
+  border-radius: var(--radius-md, 6px);
+  border: 1px solid var(--color-border, #ddd);
+  margin-top: var(--spacing-md, 1rem);
+}
+
+.conversation-page__meta-item {
+  display: flex;
+  gap: var(--spacing-sm, 0.5rem);
 }
 
 .conversation-page__meta-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-text-secondary);
+  color: var(--color-text-secondary, #666);
+  min-width: 120px;
 }
 
 .conversation-page__meta-value {
   font-size: 0.875rem;
   font-family: monospace;
-  color: var(--color-text-primary);
+  color: var(--color-text-primary, #333);
+}
+
+.conversation-page__contributions {
+  margin-top: var(--spacing-lg, 1rem);
+}
+
+.conversation-page__section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #333);
+  margin: 0 0 1rem 0;
 }

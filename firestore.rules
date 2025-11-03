@@ -1,0 +1,51 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(conversationId) {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/conversations/$(conversationId)).data.ownerUid == request.auth.uid;
+    }
+    
+    function isValidContribution() {
+      let data = request.resource.data;
+      return data.content is string &&
+             data.content.size() > 0 &&
+             data.content.size() <= 5000 &&
+             (data.tone == null || data.tone in ['neutral', 'positive', 'negative', 'curious', 'assertive']) &&
+             data.authorUid is string &&
+             data.authorDisplayName is string &&
+             data.createdAt is timestamp;
+    }
+    
+    // Conversations collection
+    match /conversations/{conversationId} {
+      // Allow reading conversations if user is the owner
+      allow read: if isOwner(conversationId);
+      
+      // Allow updates to slug and updatedAt only by owner
+      allow update: if isOwner(conversationId) && 
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['slug', 'updatedAt']);
+      
+      // Contributions subcollection
+      match /contributions/{contributionId} {
+        // Allow reading contributions if user is the owner of the conversation
+        allow read: if isOwner(conversationId);
+        
+        // Allow creating contributions if user is authenticated and data is valid
+        allow create: if isOwner(conversationId) &&
+                         isValidContribution() &&
+                         request.resource.data.authorUid == request.auth.uid;
+        
+        // Deny all updates and deletes
+        allow update: if false;
+        allow delete: if false;
+      }
+    }
+  }
+}

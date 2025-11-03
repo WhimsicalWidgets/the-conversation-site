@@ -1,0 +1,81 @@
+.contribution-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.contribution-list__loading,
+.contribution-list__empty {
+  text-align: center;
+  color: #666;
+  padding: 2rem;
+  font-style: italic;
+}
+
+.contribution-item {
+  background: #f9f9f9;
+  border-left: 4px solid #007bff;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.contribution-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.contribution-item__author {
+  font-weight: 600;
+  color: #333;
+}
+
+.contribution-item__timestamp {
+  color: #999;
+  font-size: 0.8125rem;
+}
+
+.contribution-item__content {
+  margin: 0.5rem 0;
+  line-height: 1.6;
+  color: #333;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.contribution-item__tone {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.contribution-item__tone--neutral {
+  background: #e0e0e0;
+  color: #666;
+}
+
+.contribution-item__tone--positive {
+  background: #d4edda;
+  color: #155724;
+}
+
+.contribution-item__tone--negative {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.contribution-item__tone--curious {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.contribution-item__tone--assertive {
+  background: #fff3cd;
+  color: #856404;
+}
