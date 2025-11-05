@@ -16,6 +16,8 @@ export type Conversation = {
   title: string;
   slug: string | null;
   ownerUid: string;
+  ownerDisplayName?: string;
+  participantRoles?: Record<string, string>;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 };

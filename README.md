@@ -82,9 +82,62 @@ Monitor your workers:
 pnpm exec wrangler tail
 ```
 
-## Additional Resources
+## Firebase Setup and Conversation Flow
 
-- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
-- [Vite Documentation](https://vitejs.dev/guide/)
-- [React Documentation](https://reactjs.org/)
-- [Hono Documentation](https://hono.dev/)
+This app integrates Firebase Auth and Firestore to enable authenticated users to start a new conversation from the landing page and jump into its workspace.
+
+### 1. Configure environment variables
+
+Copy `.env.example` to `.env` and fill in your Firebase project settings:
+
+```
+VITE_FIREBASE_API_KEY=your-api-key-here
+VITE_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+VITE_FIREBASE_APP_ID=your-app-id
+```
+
+### 2. Security rules
+
+Initial Firestore rules are in `firestore.rules` and allow:
+- create on `conversations/{hashId}` only for authenticated users where `ownerUid == request.auth.uid`
+- get/read on conversations for the owner
+- everything else is denied by default (with limited allowances for owner contributions)
+
+Deploy rules with the Firebase CLI (manual step):
+
+```
+firebase deploy --only firestore:rules
+```
+
+Or use the helper script which prints the command:
+
+```
+pnpm run rules:deploy
+```
+
+### 3. Starting a conversation
+
+- Sign in using the header or the landing page CTA (Google sign-in popup)
+- Click "Start a conversation" on the landing page
+- A Firestore document will be created at `conversations/{hashId}` with:
+  - title: "Untitled Conversation"
+  - slug: null
+  - ownerUid, ownerDisplayName
+  - participantRoles: { [uid]: "owner" }
+  - createdAt, updatedAt
+- You will be redirected to `/c/{hashId}?created=1` and see a brief success banner in the workspace
+
+### 4. Testing
+
+Run the test suite and lints:
+
+```
+pnpm lint
+pnpm test
+```
+
+A lightweight Landing page test ensures the correct CTA appears based on authentication state.
+
