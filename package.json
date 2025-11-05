@@ -15,6 +15,7 @@
   "dependencies": {
     "firebase": "^12.5.0",
     "hono": "4.8.2",
+    "nanoid": "^5.0.7",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-router-dom": "^6.30.1",
@@ -27,13 +28,17 @@
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@vitejs/plugin-react": "5.0.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
     "eslint": "9.27.0",
     "eslint-plugin-react-hooks": "5.2.0",
     "eslint-plugin-react-refresh": "0.4.20",
     "globals": "16.2.0",
+    "jsdom": "^25.0.1",
     "typescript": "5.8.3",
     "typescript-eslint": "8.35.0",
     "vite": "^6.0.0",
+    "vitest": "^2.1.8",
     "wrangler": "4.21.x"
   },
   "scripts": {
@@ -43,7 +48,9 @@
     "deploy": "wrangler deploy",
     "dev": "vite",
     "lint": "eslint .",
-    "preview": "pnpm run build && vite preview"
+    "preview": "pnpm run build && vite preview",
+    "rules:deploy": "echo 'Use Firebase CLI: firebase deploy --only firestore:rules'",
+    "test": "vitest run"
   },
   "type": "module"
 }

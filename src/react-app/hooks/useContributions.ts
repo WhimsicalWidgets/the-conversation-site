@@ -8,7 +8,7 @@ import {
   Timestamp,
   getDocs,
 } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../firebase/config";
 import { Contribution, ToneType } from "../types";
 import { generateUniqueSlug, extractFirstSentence } from "../utils";
 import { updateConversationSlug } from "./useConversation";

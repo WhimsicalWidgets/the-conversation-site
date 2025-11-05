@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { doc, getDoc, updateDoc, Timestamp } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "../firebase/config";
 import { Conversation } from "../types";
 
 export function useConversation(conversationId: string | undefined) {

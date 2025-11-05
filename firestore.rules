@@ -25,6 +25,9 @@ service cloud.firestore {
     
     // Conversations collection
     match /conversations/{conversationId} {
+      // Allow creating conversations only when the requester is authenticated and is the owner
+      allow create: if isAuthenticated() && request.resource.data.ownerUid == request.auth.uid;
+
       // Allow reading conversations if user is the owner
       allow read: if isOwner(conversationId);
       

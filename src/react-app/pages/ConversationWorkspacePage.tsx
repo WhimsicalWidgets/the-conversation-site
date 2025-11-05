@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useAuth, useConversation, useContributions, createContribution } from "../hooks";
 import { ContributionList, ContributionComposer } from "../components";
 import { ToneType } from "../types";
@@ -10,6 +10,8 @@ type ConversationParams = {
 
 export function ConversationWorkspacePage() {
   const { conversationIdOrSlug } = useParams<ConversationParams>();
+  const [searchParams] = useSearchParams();
+  const justCreated = searchParams.get("created") === "1";
   const { user } = useAuth();
   const { conversation, loading: conversationLoading } = useConversation(conversationIdOrSlug);
   const { contributions, loading: contributionsLoading } = useContributions(conversationIdOrSlug);
@@ -43,6 +45,9 @@ export function ConversationWorkspacePage() {
 
   return (
     <section className="conversation-page">
+      {justCreated && (
+        <div className="conversation-page__banner">Conversation created: {conversationLabel}</div>
+      )}
       <div className="conversation-page__header">
         <h1 className="conversation-page__title">
           {conversation?.title || "Conversation Workspace"}

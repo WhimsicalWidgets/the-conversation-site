@@ -1,6 +1,6 @@
 # React App Structure
 
-The React application has been reorganized to support future feature development with routing, context providers, and a modular layout.
+The React application includes routing, context providers, Firebase integration, and a modular layout.
 
 ## Directory Structure
 
@@ -12,8 +12,15 @@ src/react-app
 │   ├── Layout.tsx
 │   ├── Header.css
 │   └── Layout.css
+├── contexts
+│   └── AuthContext.tsx
+├── firebase
+│   └── config.ts
 ├── hooks
-│   └── index.ts
+│   ├── useAuth.ts
+│   ├── useConversation.ts
+│   ├── useContributions.ts
+│   └── useCreateConversation.ts
 ├── pages
 │   ├── LandingPage.tsx
 │   ├── ConversationWorkspacePage.tsx
@@ -21,7 +28,7 @@ src/react-app
 │   └── ConversationWorkspacePage.css
 ├── providers
 │   ├── AppProviders.tsx
-│   └── index.ts
+│   └── AuthProvider.tsx
 ├── styles
 │   └── global.css
 └── main.tsx
@@ -29,11 +36,17 @@ src/react-app
 
 ## Routing Overview
 
-- `/` - Landing page placeholder
-- `/c/:conversationIdOrSlug` - Conversation workspace placeholder
+- `/` - Landing page with sign-in and "Start a conversation" CTA
+- `/c/:conversationIdOrSlug` - Conversation workspace (shows a success banner on creation)
 
-## Next Steps
+## Firebase Auth + Firestore
 
-- Implement real content for landing and workspace pages
-- Add additional providers (auth, data fetching) within `AppProviders`
-- Expand styles and components to support new features
+- Auth is provided via `AuthProvider` and exposed through `useAuth()`
+- Conversations are stored under `conversations/{hashId}`
+- `useCreateConversation()` creates a new conversation for the signed-in user and navigates to the workspace
+
+## Development
+
+- Ensure `.env` is configured with Firebase keys (see project root README)
+- Run `pnpm dev` to start the app
+- Run tests with `pnpm test`
