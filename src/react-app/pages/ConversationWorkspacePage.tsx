@@ -1,6 +1,6 @@
 import { useParams, useSearchParams } from "react-router-dom";
-import { useAuth, useConversation, useContributions, createContribution } from "../hooks";
-import { ContributionList, ContributionComposer } from "../components";
+import { useAuth, useConversation, useContributions, createContribution, updateConversationTitle } from "../hooks";
+import { ContributionList, ContributionComposer, EditableTitle } from "../components";
 import { ToneType } from "../types";
 import "./ConversationWorkspacePage.css";
 
@@ -13,7 +13,7 @@ export function ConversationWorkspacePage() {
   const [searchParams] = useSearchParams();
   const justCreated = searchParams.get("created") === "1";
   const { user } = useAuth();
-  const { conversation, loading: conversationLoading } = useConversation(conversationIdOrSlug);
+  const { conversation, loading: conversationLoading, error, notFound, permissionDenied } = useConversation(conversationIdOrSlug);
   const { contributions, loading: contributionsLoading } = useContributions(conversationIdOrSlug);
 
   const handleSubmitContribution = async (content: string, tone: ToneType | null) => {
@@ -32,39 +32,98 @@ export function ConversationWorkspacePage() {
     });
   };
 
+  const handleUpdateTitle = async (conversationId: string, newTitle: string) => {
+    await updateConversationTitle(conversationId, newTitle);
+    // Trigger a re-fetch by reloading the page
+    window.location.reload();
+  };
+
   if (conversationLoading) {
     return (
       <section className="conversation-page">
-        <p>Loading conversation...</p>
+        <div className="conversation-page__banner conversation-page__banner--info">
+          Loading conversation...
+        </div>
       </section>
     );
   }
 
-  const conversationLabel = conversationIdOrSlug ?? "unknown conversation";
-  const displaySlug = conversation?.slug || "No slug yet";
+  if (permissionDenied) {
+    return (
+      <section className="conversation-page">
+        <div className="conversation-page__banner conversation-page__banner--error">
+          Permission Denied: You don't have permission to view this conversation.
+        </div>
+      </section>
+    );
+  }
+
+  if (notFound || !conversation) {
+    return (
+      <section className="conversation-page">
+        <div className="conversation-page__banner conversation-page__banner--warning">
+          Conversation Not Found: The requested conversation does not exist.
+        </div>
+      </section>
+    );
+  }
+
+  if (error && !conversation) {
+    return (
+      <section className="conversation-page">
+        <div className="conversation-page__banner conversation-page__banner--error">
+          Error: {error.message}
+        </div>
+      </section>
+    );
+  }
+
+  const isOwner = user?.uid === conversation.ownerUid;
+  const displaySlug = conversation.slug || "No slug yet";
+  const formattedCreatedAt = conversation.createdAt?.toDate().toLocaleString() || "Unknown";
+  const formattedUpdatedAt = conversation.updatedAt?.toDate().toLocaleString() || "Unknown";
 
   return (
     <section className="conversation-page">
       {justCreated && (
-        <div className="conversation-page__banner">Conversation created: {conversationLabel}</div>
+        <div className="conversation-page__banner conversation-page__banner--success">
+          Conversation created successfully!
+        </div>
       )}
       <div className="conversation-page__header">
-        <h1 className="conversation-page__title">
-          {conversation?.title || "Conversation Workspace"}
-        </h1>
-        {conversation?.slug && (
+        <EditableTitle
+          title={conversation.title}
+          conversationId={conversation.id}
+          isOwner={isOwner}
+          onUpdate={handleUpdateTitle}
+        />
+        {conversation.slug && (
           <p className="conversation-page__slug">/{conversation.slug}</p>
         )}
       </div>
 
       <div className="conversation-page__meta">
         <div className="conversation-page__meta-item">
-          <span className="conversation-page__meta-label">Conversation ID</span>
-          <span className="conversation-page__meta-value">{conversationLabel}</span>
+          <span className="conversation-page__meta-label">Hash ID</span>
+          <span className="conversation-page__meta-value">{conversation.id}</span>
         </div>
         <div className="conversation-page__meta-item">
           <span className="conversation-page__meta-label">Slug</span>
           <span className="conversation-page__meta-value">{displaySlug}</span>
+        </div>
+        <div className="conversation-page__meta-item">
+          <span className="conversation-page__meta-label">Owner</span>
+          <span className="conversation-page__meta-value">
+            {conversation.ownerDisplayName || conversation.ownerUid}
+          </span>
+        </div>
+        <div className="conversation-page__meta-item">
+          <span className="conversation-page__meta-label">Created</span>
+          <span className="conversation-page__meta-value">{formattedCreatedAt}</span>
+        </div>
+        <div className="conversation-page__meta-item">
+          <span className="conversation-page__meta-label">Updated</span>
+          <span className="conversation-page__meta-value">{formattedUpdatedAt}</span>
         </div>
       </div>
 
