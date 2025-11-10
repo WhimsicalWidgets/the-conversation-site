@@ -31,9 +31,17 @@ service cloud.firestore {
       // Allow reading conversations if user is the owner
       allow read: if isOwner(conversationId);
       
-      // Allow updates to slug and updatedAt only by owner
+      // Allow updates to slug, title, and updatedAt only by owner
       allow update: if isOwner(conversationId) && 
-                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['slug', 'updatedAt']);
+                       request.resource.data.diff(resource.data).affectedKeys().hasOnly(['slug', 'title', 'updatedAt']) &&
+                       (
+                         // If title is being updated, validate it
+                         !request.resource.data.diff(resource.data).affectedKeys().hasAny(['title']) ||
+                         (request.resource.data.title is string &&
+                          request.resource.data.title.size() > 0 &&
+                          request.resource.data.title.size() <= 200 &&
+                          request.resource.data.title.trim() == request.resource.data.title)
+                       );
       
       // Contributions subcollection
       match /contributions/{contributionId} {
